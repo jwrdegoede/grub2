@@ -170,6 +170,15 @@ grub_core_cmd_ls (struct grub_command *cmd __attribute__ ((unused)),
   return grub_errno;
 }
 
+/* version */
+static grub_err_t
+grub_core_cmd_version (struct grub_command *cmd __attribute__ ((unused)),
+		       int argc, char *argv[])
+{
+  grub_printf ("%s, build %s %s\n", PACKAGE_STRING, __DATE__, __TIME__);
+  return 0;
+}
+
 void
 grub_register_core_commands (void)
 {
@@ -186,4 +195,6 @@ grub_register_core_commands (void)
 			 N_("[ARG]"), N_("List devices or files."));
   grub_register_command ("insmod", grub_core_cmd_insmod,
 			 N_("MODULE"), N_("Insert a module."));
+  grub_register_command ("version", grub_core_cmd_version, 0,
+			 N_("Print grub version and build time."));
 }
