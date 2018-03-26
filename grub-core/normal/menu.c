@@ -610,8 +610,8 @@ run_menu (grub_menu_t menu, int nested, int *auto_boot)
 	  print_countdown (pos, timeout);
 	}
 
-      /* Enter interruptible sleep until Escape or a menu hotkey is pressed,
-         or the timeout expires.  */
+      /* Sleep until a menu hotkey is pressed, we are interrupted by an ESC/F8
+         keypress, or the timeout expires. */
       saved_time = grub_get_time_ms ();
       while (1)
 	{
@@ -624,7 +624,8 @@ run_menu (grub_menu_t menu, int nested, int *auto_boot)
 	      if (entry >= 0)
 		break;
 	    }
-	  if (key == GRUB_TERM_ESC)
+	  /* ESC sometimes is the BIOS setup hotkey, also allow F8 as intr. */
+	  if (key == GRUB_TERM_ESC || key == GRUB_TERM_KEY_F8)
 	    {
 	      timeout = -1;
 	      break;

@@ -51,12 +51,16 @@ static int
 grub_interruptible_millisleep (grub_uint32_t ms)
 {
   grub_uint64_t start;
+  int key;
 
   start = grub_get_time_ms ();
 
-  while (grub_get_time_ms () - start < ms)
-    if (grub_getkey_noblock () == GRUB_TERM_ESC)
+  while (grub_get_time_ms () - start < ms) {
+    key = grub_getkey_noblock ();
+    /* ESC sometimes is the BIOS setup hotkey, also allow F8 as intr. */
+    if (key == GRUB_TERM_ESC || key == GRUB_TERM_KEY_F8)
       return 1;
+  }
 
   return 0;
 }
