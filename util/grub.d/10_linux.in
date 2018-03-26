@@ -20,6 +20,7 @@ set -e
 prefix="@prefix@"
 exec_prefix="@exec_prefix@"
 datarootdir="@datarootdir@"
+quiet_boot="@QUIET_BOOT@"
 
 . "$pkgdatadir/grub-mkconfig_lib"
 
@@ -199,29 +200,35 @@ EOF
     fi
     printf '%s\n' "${prepare_boot_cache}" | sed "s/^/$submenu_indentation/"
   fi
-  message="$(gettext_printf "Loading Linux %s ..." ${version})"
-  if [ -d /sys/firmware/efi ]; then
+  if [ x"$quiet_boot" = x0 ]; then
+    message="$(gettext_printf "Loading Linux %s ..." ${version})"
     sed "s/^/$submenu_indentation/" << EOF
 	echo	'$(echo "$message" | grub_quote)'
+EOF
+  fi
+  if [ -d /sys/firmware/efi ]; then
+    sed "s/^/$submenu_indentation/" << EOF
 	${linuxefi} ${rel_dirname}/${basename} root=${linux_root_device_thisversion} ro ${args}
 EOF
   else
     sed "s/^/$submenu_indentation/" << EOF
-	echo	'$(echo "$message" | grub_quote)'
 	linux${sixteenbit} ${rel_dirname}/${basename} root=${linux_root_device_thisversion} ro ${args}
 EOF
   fi
   if test -n "${initrd}" ; then
-    # TRANSLATORS: ramdisk isn't identifier. Should be translated.
-    message="$(gettext_printf "Loading initial ramdisk ...")"
-    if [ -d /sys/firmware/efi ]; then
+    if [ x"$quiet_boot" = x0 ]; then
+      # TRANSLATORS: ramdisk isn't identifier. Should be translated.
+      message="$(gettext_printf "Loading initial ramdisk ...")"
       sed "s/^/$submenu_indentation/" << EOF
 	echo	'$(echo "$message" | grub_quote)'
+EOF
+    fi
+    if [ -d /sys/firmware/efi ]; then
+      sed "s/^/$submenu_indentation/" << EOF
 	${initrdefi} ${rel_dirname}/${initrd}
 EOF
     else
       sed "s/^/$submenu_indentation/" << EOF
-	echo	'$message'
 	initrd${sixteenbit} ${rel_dirname}/${initrd}
 EOF
     fi

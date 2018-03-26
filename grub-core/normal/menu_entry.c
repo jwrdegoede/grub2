@@ -1167,9 +1167,11 @@ run (struct screen *screen)
   char *dummy[1] = { NULL };
 
   grub_cls ();
+#if !QUIET_BOOT
   grub_printf ("  ");
   grub_printf_ (N_("Booting a command list"));
   grub_printf ("\n\n");
+#endif
 
   errs_before = grub_err_printed_errors;
 

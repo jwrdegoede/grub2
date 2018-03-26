@@ -427,6 +427,13 @@ grub_gettext_init_ext (struct grub_gettext_context *ctx,
   if (locale[0] == 'e' && locale[1] == 'n'
       && (locale[2] == '\0' || locale[2] == '_'))
     grub_errno = err = GRUB_ERR_NONE;
+
+#if QUIET_BOOT
+  /* If no translations are available, silently fall back to untranslated. */
+  if (err == GRUB_ERR_FILE_NOT_FOUND)
+    grub_errno = err = GRUB_ERR_NONE;
+#endif
+
   return err;
 }
 

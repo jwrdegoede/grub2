@@ -397,7 +397,9 @@ grub_menu_execute_with_fallback (grub_menu_t menu,
 {
   int fallback_entry;
 
+#if !QUIET_BOOT
   callback->notify_booting (entry, callback_data);
+#endif
 
   grub_menu_execute_entry (entry, 1);
 
