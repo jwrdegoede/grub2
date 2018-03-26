@@ -23,7 +23,13 @@
  *  defines for the code go here
  */
 
+#if !QUIET_BOOT
 #define MSG(x)	movw $x, %si; call LOCAL(message)
+#else
+#define MSG(x)
+#endif
+
+#define ERR(x)	movw $x, %si; call LOCAL(message)
 
 	.file	"diskboot.S"
 
@@ -305,17 +311,17 @@ LOCAL(bootit):
  * BIOS Geometry translation error (past the end of the disk geometry!).
  */
 LOCAL(geometry_error):
-	MSG(geometry_error_string)
+	ERR(geometry_error_string)
 	jmp	LOCAL(general_error)
 
 /*
  * Read error on the disk.
  */
 LOCAL(read_error):
-	MSG(read_error_string)
+	ERR(read_error_string)
 
 LOCAL(general_error):
-	MSG(general_error_string)
+	ERR(general_error_string)
 
 /* go here when you need to stop the machine hard after an error condition */
 LOCAL(stop):	jmp	LOCAL(stop)
